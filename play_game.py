@@ -17,4 +17,4 @@ class PlayGame:
         self.game_board.print_gameboard()
 
     def place_fleet(self):
-        pass
+        self.fleet.fleet()

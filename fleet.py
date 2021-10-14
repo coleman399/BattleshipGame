@@ -7,14 +7,14 @@ from submarine import Submarine
 class Fleet:
     def __init__(self):
         self.fleet_list = []
-        self.fleet()
 
     def fleet(self):
-        aircraft_carrier = AircraftCarrier(False, 1, 1)
-        battleship_one = BattleshipOne(False, 1, 1)
-        battleship_two = BattleshipTwo(False, 1, 1)
-        destroyer = Destroyer(False, 1, 1)
-        submarine = Submarine(False, 1, 1)
+        aircraft_carrier = AircraftCarrier(int(input("what row would you like your Aircraft Carrier? ")), int(input("what column would you like your Aircraft Carrier? ")))
+        battleship_one = BattleshipOne(int(input(f"what row would you like Battleship 1? ")), int(input(f"what column would you like Battleship 1? ")))
+        battleship_two = BattleshipTwo(int(input(f"what row would you like Battleship 2? ")), int(input(f"what column would you like Battleship 2? ")))
+        submarine = Submarine(int(input(f"what row would you like your Submarine? ")), int(input(f"what column would you like your Submarine? ")))
+        destroyer = Destroyer(int(input(f"what row would you like your Destroyer? ")), int(input(f"what column would you like your Destroyer? ")))
+
         self.fleet_list.append(aircraft_carrier)
         self.fleet_list.append(battleship_one)
         self.fleet_list.append(battleship_two)
