@@ -1,9 +1,10 @@
 from ship import Ship
 class Destroyer(Ship):
-    def __init__(self, row, index):
-        self.length = 2
+    def __init__(self, row, column):
+        self.name = "Destroyer"
+        self.ship_length = 2
         self.row = row
-        self.index = index
+        self.column = column
         self.set_vertical()
 
     def set_vertical(self):

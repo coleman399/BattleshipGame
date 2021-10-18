@@ -1,7 +1,7 @@
 class Ship:
         def __init__(self):
-            self.length = None
+            self.ship_length = None
             self.vertical = None
             self.row = None
-            self.index = None
-
+            self.column = None
+            self.name = None

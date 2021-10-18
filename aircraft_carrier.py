@@ -1,10 +1,11 @@
 from ship import Ship
 
-class AircraftCarrier:
-    def __init__(self, row, index):
-        self.length = 5
+class AircraftCarrier(Ship):
+    def __init__(self, row, column):
+        self.name = "Aircraft Carrier"
+        self.ship_length = 5
         self.row = row
-        self.index = index
+        self.column = column
         self.set_vertical()
     
     def set_vertical(self):

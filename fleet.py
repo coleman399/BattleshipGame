@@ -3,20 +3,27 @@ from battleship_two import BattleshipTwo
 from battleship_one import BattleshipOne
 from aircraft_carrier import AircraftCarrier
 from submarine import Submarine
+from game_board import Gameboard
 
 class Fleet:
     def __init__(self):
-        self.fleet_list = []
+        self.fleet_list = [Destroyer(), BattleshipOne(), BattleshipTwo(), AircraftCarrier(), Submarine()]
+        self.player_board = Gameboard()
 
-    def fleet(self):
-        aircraft_carrier = AircraftCarrier(int(input("what row would you like your Aircraft Carrier? ")), int(input("what column would you like your Aircraft Carrier? ")))
-        battleship_one = BattleshipOne(int(input(f"what row would you like Battleship 1? ")), int(input(f"what column would you like Battleship 1? ")))
-        battleship_two = BattleshipTwo(int(input(f"what row would you like Battleship 2? ")), int(input(f"what column would you like Battleship 2? ")))
-        submarine = Submarine(int(input(f"what row would you like your Submarine? ")), int(input(f"what column would you like your Submarine? ")))
-        destroyer = Destroyer(int(input(f"what row would you like your Destroyer? ")), int(input(f"what column would you like your Destroyer? ")))
-
-        self.fleet_list.append(aircraft_carrier)
-        self.fleet_list.append(battleship_one)
-        self.fleet_list.append(battleship_two)
-        self.fleet_list.append(destroyer)
-        self.fleet_list.append(submarine)
+    def create_fleet(self):
+        for ship in self.fleet_list:
+            occupied = True
+            while(occupied):
+                occupied = False
+                row = input(f"what row would you like to place your {ship.name}? ")
+                column = input(f"what column would you like to place your {ship.name}? ")
+                if ship.vertical == True:
+                    for p in range(ship.ship_length):
+                        if not self.player_board.is_ocean(row + p, column, self.player_board):
+                            self.fleet_list[ship] = ship(row, column)
+                            occupied = True
+                else:
+                    for p in range(ship.ship_length):
+                        if not self.player_board.is_ocean(row, column - p, self.player_board):
+                            occupied = True
+            
