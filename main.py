@@ -1,4 +1,4 @@
-from play_game import PlayGame
+from run_game import RunGame
 
-playgame = PlayGame()
-playgame.play_game()
+playgame = RunGame()
+playgame.run_game()

@@ -1,11 +1,10 @@
-from ship import Ship
-class Submarine(Ship):
+class Submarine():
     def __init__(self, row, column):
         self.name = "Adriana"
         self.ship_length = 3
         self.row = row
         self.column = column
-        self.set_vertical()
+        self.is_vertical = None
 
     def set_vertical(self):
         loop = True
@@ -14,11 +13,11 @@ class Submarine(Ship):
             answer = input(
                 "would you like to your Submarine placed vertically? ")
             if answer == "y":
-                self.vertical = True
-
+                self.is_vertical = True
                 loop = False
                 continue
             elif answer == "n":
+                self.is_vertical = False
                 loop = False
                 continue
             else:

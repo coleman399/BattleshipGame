@@ -1,17 +1,11 @@
-from destroyer import Destroyer
-from battleship_two import BattleshipTwo
-from battleship_one import BattleshipOne
-from aircraft_carrier import AircraftCarrier
-from submarine import Submarine
-from game_board import Gameboard
-
-class Fleet:
+from player import Player
+class Fleet(Player):
     def __init__(self):
-        self.fleet_list = [Destroyer(), BattleshipOne(), BattleshipTwo(), AircraftCarrier(), Submarine()]
-        self.player_board = Gameboard()
+        self.player = Player()
+        super().__init__()
 
     def create_fleet(self):
-        for ship in self.fleet_list:
+        for ship in self.player.fleet_list:
             occupied = True
             while(occupied):
                 occupied = False
@@ -21,9 +15,8 @@ class Fleet:
                     for p in range(ship.ship_length):
                         if not self.player_board.is_ocean(row + p, column, self.player_board):
                             self.fleet_list[ship] = ship(row, column)
-                            occupied = True
+                            occupied = True                
                 else:
                     for p in range(ship.ship_length):
                         if not self.player_board.is_ocean(row, column - p, self.player_board):
-                            occupied = True
-            
+                            occupied = True                        

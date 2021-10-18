@@ -1,17 +1,16 @@
 from human import Human
-from game_board import Gameboard
-from fleet import Fleet
 from player import Player
 from computer import Computer
-class PlayGame:
+from fleet import Fleet
+
+class RunGame:
     def __init__(self):
-        self.game_board = Gameboard()
-        self.fleet = Fleet()
         self.player_one = Player()
         self.player_two = Player()
         self.computer = Computer()
+        self.fleet = Fleet()
     
-    def play_game(self):
+    def run_game(self):
         self.welcome()
         self.display_rules()
         game_mode = self.choose_game_mode()
@@ -26,7 +25,7 @@ class PlayGame:
         print("--- welcome to battleship! ---")
 
     def display_board(self):
-        self.game_board.print_gameboard()
+        self.player_one.print_gameboard()
 
     def display_rules(self):
         pass
@@ -52,9 +51,10 @@ class PlayGame:
         self.player_one = Human(input("name of player one: "))
         self.player_two = Human(input("name of player two: "))
         # creating each player's fleet
-        self.player_one.fleet_list.append(self.player_one.create_fleet())
-        self.player_two.fleet_list.append(self.player_two.create_fleet())
+        self.player_one.fleet_list = self.fleet.create_fleet()
+        self.player_two.fleet_list = self.fleet.create_fleet()
 
     def player_vs_ai(self):
         self.player_one = Human(input("name of player one: "))
-        self.player_one.fleet_list.append(self.player_one.create_fleet())
+        self.player_one.create_fleet()
+        self.computer.create_fleet()
