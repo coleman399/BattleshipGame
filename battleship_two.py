@@ -1,7 +1,7 @@
-class BattleshipTwo:
+from ship import Ship
+class BattleshipTwo(Ship):
     def __init__(self, row, index):
         self.length = 4
-        self.vertical = False
         self.row = row
         self.index = index
         self.set_vertical()
@@ -11,7 +11,7 @@ class BattleshipTwo:
 
         while loop is True:
             answer = input(
-                "would you like Battleship 2 placed verticaly? ")
+                "would you like Battleship 2 placed vertically? ")
             if answer == "y":
                 self.vertical = True
                 loop = False

@@ -1,7 +1,8 @@
+from ship import Ship
+
 class AircraftCarrier:
     def __init__(self, row, index):
         self.length = 5
-        self.vertical = False
         self.row = row
         self.index = index
         self.set_vertical()
@@ -10,7 +11,7 @@ class AircraftCarrier:
         loop = True
 
         while loop is True:
-            answer = input("would you like to your Aircraft Carrier placed verticaly? ")
+            answer = input("would you like to your Aircraft Carrier placed vertically? ")
             if answer == "y":
                 self.vertical = True
                 loop = False
