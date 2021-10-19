@@ -1,22 +1,31 @@
-from player import Player
-class Fleet(Player):
+from ship import Ship
+class Fleet():
     def __init__(self):
-        self.player = Player()
-        super().__init__()
+        self.fleet_list = []
+        self.build_fleet()
 
-    def create_fleet(self):
-        for ship in self.player.fleet_list:
-            occupied = True
-            while(occupied):
-                occupied = False
-                row = input(f"what row would you like to place your {ship.name}? ")
-                column = input(f"what column would you like to place your {ship.name}? ")
-                if ship.vertical == True:
-                    for p in range(ship.ship_length):
-                        if not self.player_board.is_ocean(row + p, column, self.player_board):
-                            self.fleet_list[ship] = ship(row, column)
-                            occupied = True                
-                else:
-                    for p in range(ship.ship_length):
-                        if not self.player_board.is_ocean(row, column - p, self.player_board):
-                            occupied = True                        
+    def build_fleet(self):
+        self.aircraft_carrier = Ship("Aircraft Carrier", 5)
+        self.battleship_1 = Ship("Battleship 1", 4)
+        self.battleship_2 = Ship("Battleship 2", 4)
+        self.submarine = Ship("Submarine", 3)
+        self.destroyer = Ship("Destroyer", 2)
+
+        self.fleet_list.append(self.aircraft_carrier)
+        self.fleet_list.append(self.battleship_1)
+        self.fleet_list.append(self.battleship_2)
+        self.fleet_list.append(self.submarine)
+        self.fleet_list.append(self.destroyer)
+
+    def place_fleet(self, row, column, is_vertical):
+        self.aircraft_carrier = self.aircraft_carrier.set_location(row, column, is_vertical)
+        self.battleship_1 = self.battleship_1.set_location(row, column, is_vertical)
+        self.battleship_2 = self.battleship_2.set_location(row, column, is_vertical)
+        self.submarine = self.submarine.set_location(row, column, is_vertical)
+        self.destroyer = self.destroyer.set_location(row, column, is_vertical)
+
+        self.fleet_list.append(self.aircraft_carrier)
+        self.fleet_list.append(self.battleship_1)
+        self.fleet_list.append(self.battleship_2)
+        self.fleet_list.append(self.submarine)
+        self.fleet_list.append(self.destroyer)
