@@ -23,12 +23,3 @@ class Gameboard():
             print(count, " ".join(self.radar[row]), "||", " ".join(self.board[row]))
             count += 1 
 
-    def is_ocean(self, row, column):
-        if row < 0 or row >= self.gameboard_size:
-            return 0
-        elif column < 0 or column >= self.gameboard_size:
-            return 0
-        if self.board[row][column] == self.ocean:
-            return 1
-        else:
-            return 0

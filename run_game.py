@@ -20,7 +20,6 @@ class RunGame:
         else:
             self.player_vs_ai()
 
-
     def welcome(self):
         print("--- welcome to battleship! ---")
 
@@ -66,48 +65,45 @@ class RunGame:
             while(occupied):
                 occupied = False
                 try:# ToDo: make sure you fix input errors for row and column
-                    row = int(input(f"what row would you like to place your {ship.name}? "))
-                    column = int(input(f"what column would you like to place your {ship.name}? "))
+                    row = int(input(f"{player.name}: what row would you like to place your {ship.name}? "))
+                    column = int(input(f"{player.name}: what column would you like to place your {ship.name}? "))
                 except:
                     print("Please use numbers 0 through 9 as inputs.")    
-                self.set_vertical(ship)
+                self.set_vertical(ship, player)
                 if ship.is_vertical == True:
                     for p in range(ship.ship_length):
-                        if not self.game_board.is_ocean(row + p, column):
-                            self.fleet_list[ship] = ship(row, column)
-                            is_vertical = True
+                        if not self.is_ocean(row + p, column, player.board):
+                            player.fleet_list.append(ship.set_location(row, column, ship.is_vertical))
                             occupied = True
-                            is_vertical = True
                 else:
                     for p in range(ship.ship_length):
-                        if not self.game_board.is_ocean(row, column - p):
-                            is_vertical = False
+                        if not self.is_ocean(row, column - p, player.board):
                             occupied = True
-            if is_vertical == True:
-                player.board[row][column] = "^"
-                player.board[row + ship.ship_length-1][column] = "v"
+            if ship.is_vertical == True:
+                player.board[row][column] = " ^ "
+                player.board[row + ship.ship_length-1][column] = " v "
                 if set_ship != None:
                     player.number_board[row][column] = set_ship
                     player.number_board[row + ship.ship_length - 1][column] = set_ship
                 for p in range(ship.ship_length - 2):
-                    player.board[row + p + 1][column] = "+"
+                    player.board[row + p + 1][column] = " + "
                     if set_ship != None:
                         player.number_board[row + p + 1][column] = set_ship
             else:
-                player.board[row][column] = ">"
-                player.board[row][column - ship.ship_length + 1] = "<"
+                player.board[row][column] = " > "
+                player.board[row][column - ship.ship_length + 1] = " < "
                 if set_ship != None:
                     player.number_board[row][column] = set_ship
                     player.number_board[row][column - ship.ship_length + 1] = set_ship
                 for p in range(ship.ship_length - 2):
-                    player.board[row][column - p - 1] = "+"
+                    player.board[row][column - p - 1] = " + "
                     if set_ship != None:
-                        player.number_board[row][column - p - 1] = set_ship 
+                        player.number_board[row][column - p - 1] = set_ship
 
-    def set_vertical(self, ship):
+    def set_vertical(self, ship, player):
         loop = True
         while loop is True:
-            answer = input(f"would you like {ship.name} placed vertically? ")
+            answer = input(f"{player.name}: would you like {ship.name} placed vertically? ")
             if answer == "y":
                 ship.is_vertical = True
                 loop = False
@@ -118,3 +114,13 @@ class RunGame:
                 continue
             else:
                 print("please use the 'y' or 'n' keys to make a selection.")
+
+    def is_ocean(self, row, column, board):
+        if row < 0 or row >= self.game_board.gameboard_size:
+            return 0
+        elif column < 0 or column >= self.game_board.gameboard_size:
+            return 0
+        if board[row][column] == self.game_board.ocean:
+            return 1
+        else:
+            return 0
