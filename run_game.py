@@ -30,6 +30,7 @@ class RunGame:
                 player.game_board.print_gameboard()
         except:
             self.game_board.print_gameboard()
+    
     def display_rules(self):
         pass
 
@@ -51,10 +52,11 @@ class RunGame:
         self.player_one = Human(input("name of player one: "))
         self.player_two = Human(input("name of player two: "))
         # creating each player's fleet
-        self.player_one.fleet_list = self.create_fleet(self.player_one)
         self.display_board(self.player_one)
-        self.player_two.fleet_list = self.create_fleet(self.player_two)
+        self.player_one.fleet_list = self.create_fleet(self.player_one)
         self.display_board(self.player_two)
+        self.player_two.fleet_list = self.create_fleet(self.player_two)
+
 
     def player_vs_ai(self):
         self.player_one = Human(input("name of player one: "))
@@ -141,10 +143,15 @@ class RunGame:
 
     def check_coordinates(self, player, ship):
         # TODO: inform user of ship length when asking for coordinates
-        try:
-            row = int(input(f"{player.name}: what row would you like to place your {ship.name}? "))
-            column = int(input(f"{player.name}: what column would you like to place your {ship.name}? "))
-            return row, column
-        except:
-            print("Please use numbers 0 through 9 as inputs.")
-            self.check_coordinates(player, ship) 
+        row = -1
+        column = -1
+        while True: 
+            if row < 0 or row > 9:
+                if ship.name != None:
+                    row = int(input(f"{player.name}: what row would you like to place your {ship.name}? "))
+                else:
+                    return
+            elif column < 0 or column > 9:
+                column = int(input(f"{player.name}: what column would you like to place your {ship.name}? "))
+            else:
+                return row, column
