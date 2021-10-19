@@ -4,7 +4,7 @@ class Gameboard():
     def __init__(self):
         self.gameboard_size = 10
         self.ocean = "[ ]"
-        self.fire = "[O]"
+        self.miss = "[O]"
         self.hit = "[X]"
         self.blank_board = []
 
