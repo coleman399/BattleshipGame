@@ -3,7 +3,7 @@ from fleet import Fleet
 class Player():
 
     def __init__(self):
-        self.health = 2
+        self.health = 18
         self.fleet = Fleet()
         self.game_board = Gameboard()
         self.fleet_list = self.fleet.fleet_list
