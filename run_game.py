@@ -12,9 +12,9 @@ class RunGame:
         self.player_two = Player()
         self.computer = Computer()
         self.game_board = Gameboard()
-        self.player_one.fleet.build_fleet()
-        self.player_two.fleet.build_fleet()
-        self.computer.fleet.build_fleet()
+        self.player_one_fleet = self.player_one.fleet.build_fleet()
+        self.player_two_fleet = self.player_two.fleet.build_fleet()
+        self.computer_fleet = self.computer.fleet.build_fleet()
     
     def run_game(self):
         self.welcome()
@@ -33,7 +33,7 @@ class RunGame:
     def display_board(self, player):
         try:
             if player.name == player.name:
-                print(f"\n                             ---- {player.name}'s GAME BOARD ----")
+                print(f"\n{player.name}'s GAME BOARD: ")
                 player.game_board.print_gameboard()
         except:
             self.game_board.print_gameboard()
@@ -79,16 +79,16 @@ class RunGame:
         self.player_two = Human(input("Player Two's Name: "))
         # creating each player's fleet
         self.display_board(self.player_one)
-        self.player_one.fleet_list = self.create_fleet(self.player_one)
+        self.player_one_fleet = self.create_fleet(self.player_one)
         self.display_board(self.player_two)
-        self.player_two.fleet_list = self.create_fleet(self.player_two)
+        self.player_two_fleet = self.create_fleet(self.player_two)
 
 
     def player_vs_ai(self):
         self.player_one = Human(input("Player One's Name: "))
         self.display_board(self.player_one)
-        self.player_one.fleet_list = self.create_fleet(self.player_one)
-        self.computer.fleet_list = self.ai_create_fleet(self.computer)
+        self.player_one_fleet = self.create_fleet(self.player_one)
+        self.computer_fleet = self.ai_create_fleet(self.computer)
 
     def create_fleet(self, player):
         for ship in player.fleet_list:
@@ -101,7 +101,6 @@ class RunGame:
                 if ship.is_vertical == True:
                     for p in range(ship.ship_length):
                         if not self.is_ocean(coordinates[0] + p, coordinates[1], player.board):
-                            player.fleet_list.append(ship.set_location(coordinates[0], coordinates[1], ship.is_vertical))
                             occupied = True
                             continue
                 else:
@@ -109,28 +108,33 @@ class RunGame:
                         if not self.is_ocean(coordinates[0], coordinates[1] - p, player.board):
                             occupied = True
                             continue
-                if(occupied): 
-                    print("Please select another location.")
-            if ship.is_vertical == True:
-                player.board[coordinates[0]][coordinates[1]] = " ^ "
-                player.board[coordinates[0] + ship.ship_length-1][coordinates[1]] = " v "
-                if set_ship != None:
-                    player.number_board[coordinates[0]][coordinates[1]] = set_ship
-                    player.number_board[coordinates[0] + ship.ship_length - 1][coordinates[1]] = set_ship
-                for p in range(ship.ship_length - 2):
-                    player.board[coordinates[0] + p + 1][coordinates[1]] = " + "
-                    if set_ship != None:
-                        player.number_board[coordinates[0] + p + 1][coordinates[1]] = set_ship
-            else:
-                player.board[coordinates[0]][coordinates[1]] = " > "
-                player.board[coordinates[0]][coordinates[1] - ship.ship_length + 1] = " < "
-                if set_ship != None:
-                    player.number_board[coordinates[0]][coordinates[1]] = set_ship
-                    player.number_board[coordinates[0]][coordinates[1] - ship.ship_length + 1] = set_ship
-                for p in range(ship.ship_length - 2):
-                    player.board[coordinates[0]][coordinates[1] - p - 1] = " + "
-                    if set_ship != None:
-                        player.number_board[coordinates[0]][coordinates[1] - p - 1] = set_ship
+                if occupied == True:
+                    print("\n                            ---- Invalid Coordinates! ----\n")
+                    print("                                 ---- Try Again! ----")
+                    self.display_board(player)
+                if occupied == False:             
+                    if ship.is_vertical == True:
+                        ship.set_location(coordinates[0], coordinates[1], ship.is_vertical)
+                        player.board[coordinates[0]][coordinates[1]] = " ^ "
+                        player.board[coordinates[0] + ship.ship_length-1][coordinates[1]] = " v "
+                        if set_ship != None:
+                            player.number_board[coordinates[0]][coordinates[1]] = set_ship
+                            player.number_board[coordinates[0] + ship.ship_length - 1][coordinates[1]] = set_ship
+                        for p in range(ship.ship_length - 2):
+                            player.board[coordinates[0] + p + 1][coordinates[1]] = " + "
+                            if set_ship != None:
+                                player.number_board[coordinates[0] + p + 1][coordinates[1]] = set_ship
+                    else:
+                        ship.set_location(coordinates[0], coordinates[1], ship.is_vertical)
+                        player.board[coordinates[0]][coordinates[1]] = " > "
+                        player.board[coordinates[0]][coordinates[1] - ship.ship_length + 1] = " < "
+                        if set_ship != None:
+                            player.number_board[coordinates[0]][coordinates[1]] = set_ship
+                            player.number_board[coordinates[0]][coordinates[1] - ship.ship_length + 1] = set_ship
+                        for p in range(ship.ship_length - 2):
+                            player.board[coordinates[0]][coordinates[1] - p - 1] = " + "
+                            if set_ship != None:
+                                player.number_board[coordinates[0]][coordinates[1] - p - 1] = set_ship
             self.display_board(player)
 
     def set_vertical(self, player, ship):
@@ -189,20 +193,18 @@ class RunGame:
                     if defender.health > 0:
                         attacker.radar[guess_row][guess_column] = self.game_board.hit
                         defender.board[guess_row][guess_column] = self.game_board.hit
-                        self.display_board(attacker)
-                        print(f"\n                              ----  {attacker.name} HIT!  ----\n")
+                        print(f"\n                                 ----  {attacker.name} HIT!  ----\n")
                         return
                     else:
                         attacker.radar[guess_row][guess_column] = self.game_board.hit
                         defender.board[guess_row][guess_column] = self.game_board.hit
+                        print(f"\n                                 ----  {attacker.name} WINS!  ----")
                         self.display_board(attacker)
-                        print(f"\n                              ----  {attacker.name} WINS!  ----\n")
                         return
                 else:
                     attacker.radar[guess_row][guess_column] = self.game_board.miss
                     defender.board[guess_row][guess_column] = self.game_board.miss
-                    self.display_board(attacker)
-                    print(f"\n                              ----  {attacker.name} MISSED!  ----\n")
+                    print(f"\n                                 ----  {attacker.name} MISSED!  ----\n")
                     return
             except:
                 self.attack(attacker, defender)
@@ -216,16 +218,20 @@ class RunGame:
                     if player.health > 0:
                         computer.radar[guess_row][guess_column] = self.game_board.hit
                         player.board[guess_row][guess_column] = self.game_board.hit
+                        print(f"\n                         ----  The {computer.name} fires at ({guess_row},{guess_column})!  ----\n")
                         print(f"\n                            ----  The {computer.name} HIT!  ----\n")
                         return
                     else:
                         computer.radar[guess_row][guess_column] = self.game_board.hit
                         player.board[guess_row][guess_column] = self.game_board.hit
-                        print(f"\n                            ----  The {computer.name} WINS!  ----\n")
+                        print(f"\n                         ----  The {computer.name} fires at ({guess_row},{guess_column})!  ----\n")
+                        print(f"\n                            ----  The {computer.name} WINS!  ----")
+                        self.display_board(computer)
                         return
                 else:
                     computer.radar[guess_row][guess_column] = self.game_board.miss
                     player.board[guess_row][guess_column] = self.game_board.miss
+                    print(f"\n                         ----  The {computer.name} fires at ({guess_row},{guess_column})!  ----\n")
                     print(f"\n                            ----  The {computer.name} MISSED!  ----\n")
                     return
     
