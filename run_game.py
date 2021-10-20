@@ -19,7 +19,6 @@ class RunGame:
     def run_game(self):
         self.welcome()
         self.display_rules()
-        self.display_board(self.game_board.blank_board)
         game_mode = self.choose_game_mode()
         if game_mode == 1:
             self.player_vs_player()
@@ -29,7 +28,7 @@ class RunGame:
             self.turn(self.player_one, self.computer)    
 
     def welcome(self):
-        print("\n                           ----  Welcome to Battleship!  ----\n")
+        print("\n----------------------------------  Welcome to Battleship!  ---------------------------------------------------\n")
 
     def display_board(self, player):
         try:
@@ -40,7 +39,24 @@ class RunGame:
             self.game_board.print_gameboard()
     
     def display_rules(self):
-        pass
+        print("First to find and destroy their enemy fleet wins!")
+        print("\n                                    ---  Remember!  ---\n")
+        print("When ships are placed on the board horizontally, they are placed at a desired (x, y) coordinate then 'grow' \nto the left.\n")
+        print("                      0   1   2   3 ")
+        print("Example: (0, 3) = 0  [ ]  <   +   > ")
+        print("Submarine(size 3) 1  [ ] [ ] [ ] [ ]\n")
+        print("While ships are placed vertically the ships 'grows' down.\n")
+        print("                      0   1   2   3 ")
+        print("Example: (0, 0) =  0  ^  [ ] [ ] [ ]")
+        print("Submarine(size 3)  1  +  [ ] [ ] [ ]")
+        print("                   2  +  [ ] [ ] [ ]")
+        print("                   3  v  [ ] [ ] [ ]\n")
+        print("If you attempt to place a ship that will grow outside board you will be asked to provide new coordinates.")
+        print("\n                                    ---  Game Legend  ---\n")
+        print("Ocean = [ ]")
+        print("Miss  = [O]")
+        print("Hit   = [X]")
+        print("\n------------------------------  Good Luck and Have Fun!  ------------------------------------------------------\n")
 
     def choose_game_mode(self):
         try:
@@ -73,17 +89,6 @@ class RunGame:
         self.display_board(self.player_one)
         self.player_one.fleet_list = self.create_fleet(self.player_one)
         self.computer.fleet_list = self.ai_create_fleet(self.computer)
-
-
-    # When ships are placed on the board horizontally the are placed at the desired (x, y) coordinate then "grow" to the left.
-    #                    0   1   2   3   4
-    # example: (0, 4) = [ ]  <   +   +   >
-    # while ships are placed vertically the ships "grows" down
-    # example: (0, 0) = 0  1   2   3
-    #                 0 ^ [ ] [ ] [ ]
-    #                 1 + [ ] [ ] [ ]
-    #                 2 + [ ] [ ] [ ] 
-    #                 3 v [ ] [ ] [ ]
 
     def create_fleet(self, player):
         for ship in player.fleet_list:
@@ -185,19 +190,19 @@ class RunGame:
                         attacker.radar[guess_row][guess_column] = self.game_board.hit
                         defender.board[guess_row][guess_column] = self.game_board.hit
                         self.display_board(attacker)
-                        print(f"\n                                   ----  {attacker.name} HIT!  ----\n")
+                        print(f"\n                              ----  {attacker.name} HIT!  ----\n")
                         return
                     else:
                         attacker.radar[guess_row][guess_column] = self.game_board.hit
                         defender.board[guess_row][guess_column] = self.game_board.hit
                         self.display_board(attacker)
-                        print(f"\n                                   ----  {attacker.name} WINS!  ----\n")
+                        print(f"\n                              ----  {attacker.name} WINS!  ----\n")
                         return
                 else:
                     attacker.radar[guess_row][guess_column] = self.game_board.miss
                     defender.board[guess_row][guess_column] = self.game_board.miss
                     self.display_board(attacker)
-                    print(f"\n                                   ----  {attacker.name} MISSED!  ----\n")
+                    print(f"\n                              ----  {attacker.name} MISSED!  ----\n")
                     return
             except:
                 self.attack(attacker, defender)
@@ -211,17 +216,17 @@ class RunGame:
                     if player.health > 0:
                         computer.radar[guess_row][guess_column] = self.game_board.hit
                         player.board[guess_row][guess_column] = self.game_board.hit
-                        print(f"\n                                   ----  The {computer.name} HIT!  ----\n")
+                        print(f"\n                            ----  The {computer.name} HIT!  ----\n")
                         return
                     else:
                         computer.radar[guess_row][guess_column] = self.game_board.hit
                         player.board[guess_row][guess_column] = self.game_board.hit
-                        print(f"\n                                   ----  The {computer.name} WINS!  ----\n")
+                        print(f"\n                            ----  The {computer.name} WINS!  ----\n")
                         return
                 else:
                     computer.radar[guess_row][guess_column] = self.game_board.miss
                     player.board[guess_row][guess_column] = self.game_board.miss
-                    print(f"\n                                   ----  The {computer.name} MISSED!  ----\n")
+                    print(f"\n                            ----  The {computer.name} MISSED!  ----\n")
                     return
     
     def ai_create_fleet(self, computer):
