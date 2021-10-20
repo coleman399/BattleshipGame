@@ -16,67 +16,15 @@ class RunGame:
     def run_game(self):
         self.welcome()
         self.display_rules()
-        self.display_board(self.player_one)
+        self.display_board(self.game_board.blank_board)
         game_mode = self.choose_game_mode()
-        if game_mode == True:
+        if game_mode == 1:
             self.player_vs_player()
-            turn = True
-            while self.player_one.health > 0 and self.player_two.health > 0:
-                while turn: 
-                    if self.attack(self.player_one, self.player_two) == 0:
-                        turn = False
-                    else:
-                        loop = True
-                        while(loop):
-                            user_input = input("Would you like to play again(y/n)? ").lower()
-                            if user_input == "y":
-                                self.run_game()
-                            elif user_input == "n":
-                                print("              --- Thank You For Playing! ----")
-                                sys.exit()
-                            else:
-                                print("Please use the 'y' and 'n' keys to make a selection.")
-                else:
-                    if self.attack(self.player_two, self.player_one) == 0:
-                        turn = True
-                    else:
-                        loop = True
-                        while(loop):
-                            user_input = input("Would you like to play again(y/n)? ").lower()
-                            if user_input == "y":
-                                self.run_game()
-                            elif user_input == "n":
-                                print("              --- Thank You For Playing! ----")
-                                sys.exit()
-                            else:
-                                print("Please use the 'y' and 'n' keys to make a selection.")
-            else:
-                loop = True
-                while(loop):
-                    user_input = input("Would you like to play again(y/n)? ").lower()
-                    if user_input == "y":
-                        self.run_game()
-                    elif user_input == "n":
-                        print("              --- Thank You For Playing! ----")
-                        sys.exit()
-                    else:
-                        print("Please use the 'y' and 'n' keys to make a selection.")
-        else:
+            self.turn(self.player_one, self.player_two)
+        if game_mode == 2:
             self.player_vs_ai()
-            turn = True
-            while self.player_one.health > 0 and self.computer.health > 0:
-                while turn:
-                    if self.attack(self.player_one, self.computer) == 0:
-                        turn = False
-                    else:
-                        sys.exit()
-                else:
-                    if self.ai_attack(self.player_one, self.computer) == 0:
-                        turn = True
-                    else:
-                        sys.exit()
-            else:
-                sys.exit()
+            self.turn(self.player_one, self.computer)    
+
     def welcome(self):
         print("                             --- Welcome to Battleship! ---")
 
@@ -93,16 +41,18 @@ class RunGame:
 
     def choose_game_mode(self):
         try:
-            user_input = input(f'Please select your game mode:\nEnter 1 for Player VS Player.\nEnter 2 for Player VS AI.\nSelection: ')
+            user_input = input(f"Please select your game mode:\nEnter '1' for Player VS Player.\nEnter '2' for Player VS AI.\nSelection: ")
             if user_input == '1':
                 print("\n--- PVP GAME ---\n")
-                return True
+                return 1
             elif user_input == '2':
                 print("\n--- PVE GAME ---\n")
-                return False
+                return 2
+            else:
+                print(f"Please use the '1' or '2' keys to make a selection.")
+                return self.choose_game_mode()
         except:
-            print(f'Please enter one of the valid inputs')
-            return self.choose_game_mode()
+            return
 
     def player_vs_player(self):
         # Getting names of players
@@ -137,7 +87,7 @@ class RunGame:
             set_ship = None
             while(occupied):
                 occupied = False
-                coordinates = (self.check_coordinates(player, ship))
+                coordinates = self.check_coordinates(player, ship)
                 self.set_vertical(player, ship)
                 if ship.is_vertical == True:
                     for p in range(ship.ship_length):
@@ -200,20 +150,21 @@ class RunGame:
             return 0
 
     def check_coordinates(self, player, ship):
-        # TODO: inform user of ship length when asking for coordinates
-        row = -1
-        column = -1
-        while True: 
-            if row < 0 or row > 9:
-                if ship != None:
-                    row = int(input(f"{player.name}: what row would you like to place your {ship.name}? "))
+        loop = True
+        while loop:
+            if ship != None:
+                try:
+                    row = int(input(f"{player.name}: What row would you like to place your {ship.name}(size: {ship.ship_length})? "))
+                    column = int(input(f"{player.name}: What column would you like to place your {ship.name}(size: {ship.ship_length})? "))
+                except ValueError:
+                    print("Using number keys, select '1' through '9' for coordinates.")
+                    continue
                 else:
-                    return
-            elif column < 0 or column > 9:
-                column = int(input(f"{player.name}: what column would you like to place your {ship.name}? "))
-            else:
-                return row, column
-
+                    break
+        if row not in range(0, 9) and column not in range(0, 9):
+            self.check_coordinates(player, ship)
+        else:
+            return row, column
     def attack(self, attacker, defender):
         while attacker.health >= 0 and defender.health >= 0:
             try: 
@@ -230,24 +181,22 @@ class RunGame:
                         attacker.radar[guess_row][guess_column] = self.game_board.hit
                         self.display_board(attacker)
                         print("HIT!")
-                        return 0
+                        return
                     else:
                         attacker.radar[guess_row][guess_column] = self.game_board.hit
                         self.display_board(attacker)
                         print(f"{attacker.name} Wins!")
-                        return 1
+                        return
                 else:
                     attacker.radar[guess_row][guess_column] = self.game_board.miss
                     self.display_board(attacker)
                     print("MISS!")
-                    return 0
+                    return
             except:
                 self.attack(attacker, defender)
 
     def ai_attack(self, player, computer):
         while player.health >= 0 and computer.health >= 0:
-            try:
-                self.display_board(computer)
                 guess_row = random.randint(0, 9)
                 guess_column = random.randint(0, 9)
                 if player.board[guess_row][guess_column] != self.game_board.ocean:
@@ -256,19 +205,17 @@ class RunGame:
                         computer.radar[guess_row][guess_column] = self.game_board.hit
                         self.display_board(computer)
                         print("HIT!")
-                        return 0
+                        return
                     else:
                         computer.radar[guess_row][guess_column] = self.game_board.hit
                         self.display_board(computer)
                         print(f"{computer.name} Wins!")
-                        return 1
+                        return
                 else:
                     computer.radar[guess_row][guess_column] = self.game_board.miss
                     self.display_board(computer)
                     print("MISS!")
-                    return 0
-            except:
-                self.attack(player, computer)
+                    return
     
     def ai_create_fleet(self, computer):
         for ship in computer.fleet_list:
@@ -296,25 +243,57 @@ class RunGame:
                         for p in range(ship.ship_length):
                             if not self.is_ocean(coordinates[0], coordinates[1] - p, computer.board):
                                 occupied = True
-                if(ship.is_vertical):
-                    computer.board[coordinates[0]][coordinates[1]] = " ^ "
-                    computer.board[coordinates[0] + ship.ship_length - 1][coordinates[1]] = " v "
-                    if set_ship != None:
-                        computer.number_board[coordinates[0]][coordinates[1]] = set_ship
-                        computer.number_board[coordinates[0] + ship.ship_length - 1][coordinates[1]] = set_ship
-                    for p in range(ship.ship_length - 2):
-                        computer.board[coordinates[0] + p + 1][coordinates[1]] = " + "
-                        if set_ship != None:
-                            computer.number_board[coordinates[0] + p + 1][coordinates[1]] = set_ship
-                else:
-                    computer.board[coordinates[0]][coordinates[1]] = " > "
-                    computer.board[coordinates[0]][coordinates[1] - ship.ship_length + 1] = " < "
-                    if set_ship != None:
-                        computer.number_board[coordinates[0]][coordinates[1]] = set_ship
-                        computer.number_board[coordinates[0]][coordinates[1] - ship.ship_length + 1] = set_ship
-                    for p in range(ship.ship_length - 2):
-                        computer.board[coordinates[0]][coordinates[1] - p - 1] = " + "
-                        if set_ship != None:
-                            computer.number_board[coordinates[0]][coordinates[1] - p - 1] = set_ship
-
+                    if occupied == False:
+                        if(ship.is_vertical):
+                            computer.board[coordinates[0]][coordinates[1]] = " ^ "
+                            computer.board[coordinates[0] + ship.ship_length - 1][coordinates[1]] = " v "
+                            if set_ship != None:
+                                computer.number_board[coordinates[0]][coordinates[1]] = set_ship
+                                computer.number_board[coordinates[0] + ship.ship_length - 1][coordinates[1]] = set_ship
+                            for p in range(ship.ship_length - 2):
+                                computer.board[coordinates[0] + p + 1][coordinates[1]] = " + "
+                                if set_ship != None:
+                                    computer.number_board[coordinates[0] + p + 1][coordinates[1]] = set_ship
+                        else:
+                            computer.board[coordinates[0]][coordinates[1]] = " > "
+                            computer.board[coordinates[0]][coordinates[1] - ship.ship_length + 1] = " < "
+                            if set_ship != None:
+                                computer.number_board[coordinates[0]][coordinates[1]] = set_ship
+                                computer.number_board[coordinates[0]][coordinates[1] - ship.ship_length + 1] = set_ship
+                            for p in range(ship.ship_length - 2):
+                                computer.board[coordinates[0]][coordinates[1] - p - 1] = " + "
+                                if set_ship != None:
+                                    computer.number_board[coordinates[0]][coordinates[1] - p - 1] = set_ship
                 self.display_board(computer)
+    
+    def turn(self, player1, player2):
+        turn = 1
+        while player1.health > 0 and player2.health > 0:
+            if player2.name == "Computer":
+                if turn == 1:
+                    self.attack(player1, player2)
+                    turn = 2
+                if turn == 2:
+                    self.ai_attack(player1, player2)
+                    turn = 1
+            else:
+                if turn == 1: 
+                    self.attack(player1, player2)
+                    turn = 2
+                if turn == 2:
+                    self.attack(player2, player1)
+                    turn = 1
+        else:
+            self.end_game()
+
+    def end_game(self):
+        loop = True
+        while(loop):
+            user_input = input("Would you like to play again(y/n)? ").lower()
+            if user_input == "y":
+                self.run_game()
+            elif user_input == "n":
+                print("              --- Thank You For Playing! ----")
+                sys.exit()
+            else:
+                print("Please use the 'y' and 'n' keys to make a selection.")
