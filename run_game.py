@@ -12,6 +12,9 @@ class RunGame:
         self.player_two = Player()
         self.computer = Computer()
         self.game_board = Gameboard()
+        self.player_one.fleet.build_fleet()
+        self.player_two.fleet.build_fleet()
+        self.computer.fleet.build_fleet()
     
     def run_game(self):
         self.welcome()
@@ -26,12 +29,12 @@ class RunGame:
             self.turn(self.player_one, self.computer)    
 
     def welcome(self):
-        print("                             --- Welcome to Battleship! ---")
+        print("\n                           ----  Welcome to Battleship!  ----\n")
 
     def display_board(self, player):
         try:
             if player.name == player.name:
-                print(f"                             --- {player.name}'s GAME BOARD ---")
+                print(f"\n                             ---- {player.name}'s GAME BOARD ----")
                 player.game_board.print_gameboard()
         except:
             self.game_board.print_gameboard()
@@ -41,12 +44,12 @@ class RunGame:
 
     def choose_game_mode(self):
         try:
-            user_input = input(f"Please select your game mode:\nEnter '1' for Player VS Player.\nEnter '2' for Player VS AI.\nSelection: ")
+            user_input = input(f"Please select your game mode:\nEnter '1' for Player VS Player.\nEnter '2' for Player VS Environment.\nSelection: ")
             if user_input == '1':
-                print("\n--- PVP GAME ---\n")
+                print("\n                                   --- PVP GAME ---\n")
                 return 1
             elif user_input == '2':
-                print("\n--- PVE GAME ---\n")
+                print("\n                                   --- PVE GAME ---\n")
                 return 2
             else:
                 print(f"Please use the '1' or '2' keys to make a selection.")
@@ -70,6 +73,7 @@ class RunGame:
         self.display_board(self.player_one)
         self.player_one.fleet_list = self.create_fleet(self.player_one)
         self.computer.fleet_list = self.ai_create_fleet(self.computer)
+
 
     # When ships are placed on the board horizontally the are placed at the desired (x, y) coordinate then "grow" to the left.
     #                    0   1   2   3   4
@@ -127,7 +131,7 @@ class RunGame:
     def set_vertical(self, player, ship):
         loop = True
         while loop is True:
-            answer = input(f"{player.name}: would you like {ship.name} placed vertically? ")
+            answer = input(f"{player.name}: would you like {ship.name} placed vertically? ").lower()
             if answer == "y":
                 ship.is_vertical = True
                 loop = False
@@ -150,6 +154,7 @@ class RunGame:
             return 0
 
     def check_coordinates(self, player, ship):
+        coordinates = None
         loop = True
         while loop:
             if ship != None:
@@ -160,61 +165,63 @@ class RunGame:
                     print("Using number keys, select '1' through '9' for coordinates.")
                     continue
                 else:
-                    break
-        if row not in range(0, 9) and column not in range(0, 9):
-            self.check_coordinates(player, ship)
-        else:
-            return row, column
+                    if row in range(0, 9) and column in range(0, 9):
+                        coordinates = (row, column)
+                        return coordinates
+    
     def attack(self, attacker, defender):
-        while attacker.health >= 0 and defender.health >= 0:
+        while attacker.health > 0 and defender.health > 0:
             try: 
                 self.display_board(attacker)
                 guess_row = int(input(f"{attacker.name}: What row would you like to fire at? "))
                 guess_column = int(input(f"{attacker.name}: What column would you like to fire at? "))
                 while not self.is_ocean(guess_row, guess_column, attacker.radar):
-                    print("Invalid Shot")
+                    print("                             --- Invalid Shot! ----")
                     guess_row = int(input(f"{attacker.name}: What row would you like to fire at? "))
                     guess_column = int(input(f"{attacker.name}: What column would you like to fire at? "))
                 if defender.board[guess_row][guess_column] != self.game_board.ocean:
                     defender.health -= 1
                     if defender.health > 0:
                         attacker.radar[guess_row][guess_column] = self.game_board.hit
+                        defender.board[guess_row][guess_column] = self.game_board.hit
                         self.display_board(attacker)
-                        print("HIT!")
+                        print(f"\n                                   ----  {attacker.name} HIT!  ----\n")
                         return
                     else:
                         attacker.radar[guess_row][guess_column] = self.game_board.hit
+                        defender.board[guess_row][guess_column] = self.game_board.hit
                         self.display_board(attacker)
-                        print(f"{attacker.name} Wins!")
+                        print(f"\n                                   ----  {attacker.name} WINS!  ----\n")
                         return
                 else:
                     attacker.radar[guess_row][guess_column] = self.game_board.miss
+                    defender.board[guess_row][guess_column] = self.game_board.miss
                     self.display_board(attacker)
-                    print("MISS!")
+                    print(f"\n                                   ----  {attacker.name} MISSED!  ----\n")
                     return
             except:
                 self.attack(attacker, defender)
 
     def ai_attack(self, player, computer):
-        while player.health >= 0 and computer.health >= 0:
+        while player.health > 0 and computer.health > 0:
                 guess_row = random.randint(0, 9)
                 guess_column = random.randint(0, 9)
                 if player.board[guess_row][guess_column] != self.game_board.ocean:
                     player.health -= 1
                     if player.health > 0:
                         computer.radar[guess_row][guess_column] = self.game_board.hit
-                        self.display_board(computer)
-                        print("HIT!")
+                        player.board[guess_row][guess_column] = self.game_board.hit
+                        print(f"\n                                   ----  The {computer.name} HIT!  ----\n")
                         return
                     else:
                         computer.radar[guess_row][guess_column] = self.game_board.hit
-                        self.display_board(computer)
-                        print(f"{computer.name} Wins!")
+                        player.board[guess_row][guess_column] = self.game_board.hit
+                        print(f"\n                                   ----  The {computer.name} WINS!  ----\n")
                         return
                 else:
                     computer.radar[guess_row][guess_column] = self.game_board.miss
-                    self.display_board(computer)
-                    print("MISS!")
+                    player.board[guess_row][guess_column] = self.game_board.miss
+                    print(f"\n                                   ----  The {computer.name} MISSED!  ----\n")
                     return
     
     def ai_create_fleet(self, computer):
@@ -264,7 +271,6 @@ class RunGame:
                                 computer.board[coordinates[0]][coordinates[1] - p - 1] = " + "
                                 if set_ship != None:
                                     computer.number_board[coordinates[0]][coordinates[1] - p - 1] = set_ship
-                self.display_board(computer)
     
     def turn(self, player1, player2):
         turn = 1
@@ -293,7 +299,7 @@ class RunGame:
             if user_input == "y":
                 self.run_game()
             elif user_input == "n":
-                print("              --- Thank You For Playing! ----")
+                print("\n                             --- Thank You For Playing! ----\n")
                 sys.exit()
             else:
                 print("Please use the 'y' and 'n' keys to make a selection.")
